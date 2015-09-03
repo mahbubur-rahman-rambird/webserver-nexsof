@@ -1,0 +1,68 @@
+<project name="Nexsof" basedir="." default="build">
+
+    <!-- Project settings -->
+    <property name="project.distname" value="nexsof"/>
+    	
+	<property name="start.bat" value="start.bat"/>
+
+    <!-- define your folder for source -->
+    <property name="src.dir" value="src"/>
+
+    <!-- define your folder for library -->
+    <property name="lib.dir" value="lib"/>
+
+    <!-- define your folder for Simple jar -->
+    <property name="simple.lib" value="simple-5.1.4.jar"/>
+    	
+
+    <!-- define your folder for distribution -->
+    <property name="dist.dir" value="dist"/>
+   	<property name="dist.lib.dir" value="{dist.dir}/{lib.dir}"/>
+    <property name="nexsof.distname" value="nexsof-1.0.0"/>
+	
+    <!-- define your folder for javadoc -->
+    <property name="javadoc.dir" value="javadoc"/>
+    	
+    <!-- Local system paths -->
+    <property name="build.dir" value="build"/>
+
+    <!-- classpath -->
+    <path id="compile.classpath">
+        <fileset dir="lib">
+          <include name="*.jar"/>
+        </fileset>
+        <pathelement path ="${classpath}"/>
+    </path>
+
+    <!-- Remove classes directory for clean build -->
+    <target name="clean" description="Prepare for clean build">
+      <delete dir="${build.dir}"/>
+	  <delete dir="${dist.dir}"/>
+    </target>
+    <!-- Prepare -->
+    <target name="prepare" depends="clean">
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+    	<mkdir dir="${dist.dir}/${lib.dir}"/>
+    </target>
+    <!-- Normal build of application -->
+    <target name="build" depends="prepare">
+        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
+        	<classpath refid="compile.classpath"/>
+        </javac>
+       	<jar manifest="manifest.txt" jarfile="${dist.dir}/${nexsof.distname}.jar" basedir="${build.dir}"/>
+        <delete dir="${build.dir}"/>
+        <copy file="${lib.dir}/${simple.lib}" todir="${dist.dir}/${lib.dir}"/>
+        <copy file="webserver-start.bat" todir="${dist.dir}/"/>
+    	<copy file="webserver-start.sh" todir="${dist.dir}/"/>
+    	<copy file="README.txt" todir="${dist.dir}/"/>
+    </target>
+	<target name="run" depends="build">
+		<!-- Web server will run as a background process; so process might need to kill from task bar -->
+	    <java jar="${dist.dir}/${nexsof.distname}.jar" fork="true">
+			<arg value="C:\\nexsof-www"/>  		
+	    </java>
+	    <echo message="JAR launched." />
+	</target>
+
+</project>

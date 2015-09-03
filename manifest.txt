@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: org.nexsof.web.core.HttpServerLoader
+Class-Path: lib/simple-5.1.4.jar
+Created-By: Mahbubur 'Sumon' Rahman
